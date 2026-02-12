@@ -111,7 +111,7 @@
         }
 
         .envelope-wrapper.opened .letter {
-            transform: translateY(-150px);
+            transform: translateY(-220px);
         }
 
         .letter h2 {
@@ -569,6 +569,28 @@
     </audio>
 
     <script>
+        // ===== MANUALLY ADD YOUR PHOTO URLs HERE =====
+        // Replace 'image1.jpg', 'image2.jpg', etc. with your actual image URLs or file paths
+        // You can use online image URLs or upload images to the same folder and reference them
+        const manualPhotos = [
+           './images/DSC_3481.JPG',  // Photo 1
+            'images/DSC_6001.jpg',  // Photo 2
+            'images/mom3.jpeg',  // Photo 3
+            'images/mom4.jpeg',  // Photo 4
+            'images/mom5.jpeg',  // Photo 5
+            'images/mom6.jpeg',  // Photo 6
+            'images/WhatsApp Image 2026-02-12 at 2.05.28 PM.jpeg',  // Photo 7
+            'images/WhatsApp Image 2026-02-12 at 2.05.30 PM.jpeg',  // Photo 8
+            'images/WhatsApp Image 2026-02-12 at 2.05.31 PM.jpeg',  // Photo 9
+            'images/WhatsApp Image 2026-02-12 at 2.05.32 PM.jpeg', // Photo 10
+            'images/WhatsApp Image 2026-02-12 at 2.05.33 PM.jpeg', // Photo 11
+            'images/WhatsApp Image 2026-02-12 at 2.05.34 PM.jpeg', // Photo 12
+            'images/WhatsApp Image 2026-02-12 at 2.33.43 PM.jpeg', // Photo 13
+            'images/WhatsApp Image 2026-02-12 at 2.33.44 PM.jpeg', // Photo 14
+            'images/DSC_6102.jpg'  // Photo 15
+        ];
+        // ============================================
+
         // Envelope opening
         const envelope = document.getElementById('envelope');
         const envelopeSection = document.getElementById('envelope-section');
@@ -721,120 +743,6 @@
             }
         });
 
-        // Create photo upload section
-        function createUploadSection() {
-            const gallery = document.getElementById('gallery');
-            
-            const uploadSection = document.createElement('div');
-            uploadSection.style.cssText = `
-                grid-column: 1 / -1;
-                text-align: center;
-                padding: 40px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 20px;
-                backdrop-filter: blur(10px);
-                margin-bottom: 20px;
-            `;
-            
-            uploadSection.innerHTML = `
-                <h2 style="color: white; font-size: 32px; margin-bottom: 20px;">📸 Add Your Photos Here</h2>
-                <p style="color: #ffeaa7; margin-bottom: 30px; font-size: 18px;">
-                    Click below to upload up to 15 beautiful photos of Mom. Once uploaded, they'll be saved permanently!
-                </p>
-                <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
-                <button class="upload-btn" onclick="document.getElementById('file-input').click()" style="
-                    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-                    color: #2d3436;
-                    padding: 15px 40px;
-                    border: none;
-                    border-radius: 50px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-                ">
-                    Choose Photos
-                </button>
-            `;
-            
-            gallery.insertBefore(uploadSection, gallery.firstChild);
-            
-            // File input handler
-            const fileInput = uploadSection.querySelector('#file-input');
-            fileInput.addEventListener('change', handleFileUpload);
-        }
-
-        // Handle file upload and save to localStorage
-        function handleFileUpload(e) {
-            const files = Array.from(e.target.files).slice(0, 15);
-            const gallery = document.getElementById('gallery');
-            
-            // Clear placeholder cards
-            const placeholders = gallery.querySelectorAll('.photo-card.placeholder');
-            placeholders.forEach(card => card.remove());
-            
-            files.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Compress the image before saving
-                    compressImage(e.target.result, function(compressedImage) {
-                        try {
-                            // Save to localStorage
-                            localStorage.setItem(`mom-photo-${index}`, compressedImage);
-                            
-                            // Create card
-                            createPhotoCard(compressedImage, index);
-                        } catch (error) {
-                            console.error('Error saving photo:', error);
-                            alert('Could not save photo ' + (index + 1) + '. Storage might be full. Try uploading smaller images or fewer photos at once.');
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        // Compress image to reduce storage size
-        function compressImage(dataUrl, callback) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // Max dimensions for compression
-                const maxWidth = 1200;
-                const maxHeight = 1200;
-                
-                let width = img.width;
-                let height = img.height;
-                
-                // Calculate new dimensions while maintaining aspect ratio
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = height * (maxWidth / width);
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = width * (maxHeight / height);
-                        height = maxHeight;
-                    }
-                }
-                
-                canvas.width = width;
-                canvas.height = height;
-                
-                // Draw and compress
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                // Convert to JPEG with quality 0.7 for better compression
-                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                callback(compressedDataUrl);
-            };
-            img.src = dataUrl;
-        }
-
         // Create photo card
         function createPhotoCard(imageSrc, index) {
             const gallery = document.getElementById('gallery');
@@ -849,9 +757,8 @@
             };
             
             card.innerHTML = `
-                <button class="delete-btn" onclick="deletePhoto(${index}, event)" title="Remove this photo">×</button>
                 <div class="photo-wrapper">
-                    <img src="${imageSrc}" style="width: 100%; height: 100%; object-fit: cover;" alt="Mom photo ${index + 1}">
+                    <img src="${imageSrc}" style="width: 100%; height: 100%; object-fit: cover;" alt="Mom photo ${index + 1}" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:white;\\'><div style=\\'font-size:40px;\\'>📷</div><div style=\\'margin-top:10px;font-size:14px;\\'>Image not found</div><div style=\\'font-size:12px;margin-top:5px;opacity:0.8;\\'>${imageSrc}</div></div>'">
                 </div>
                 <div class="photo-caption">
                     <p>${data.title} 💝</p>
@@ -859,64 +766,40 @@
                 </div>
             `;
             
-            // Add click event to open modal (but not on delete button)
+            // Add click event to open modal
             const photoWrapper = card.querySelector('.photo-wrapper');
             const photoCaption = card.querySelector('.photo-caption');
+            const img = card.querySelector('img');
             
-            photoWrapper.addEventListener('click', function() {
-                openModal(imageSrc, data.title, data.description);
-            });
-            
-            photoCaption.addEventListener('click', function() {
-                openModal(imageSrc, data.title, data.description);
+            // Only add click events if image loads successfully
+            img.addEventListener('load', function() {
+                photoWrapper.addEventListener('click', function() {
+                    openModal(imageSrc, data.title, data.description);
+                });
+                
+                photoCaption.addEventListener('click', function() {
+                    openModal(imageSrc, data.title, data.description);
+                });
             });
             
             gallery.appendChild(card);
         }
 
-        // Delete photo function
-        function deletePhoto(index, event) {
-            event.stopPropagation(); // Prevent modal from opening
-            
-            if (confirm('Are you sure you want to remove this photo?')) {
-                // Remove from localStorage
-                localStorage.removeItem(`mom-photo-${index}`);
-                
-                // Remove card from display
-                const card = document.querySelector(`.photo-card[data-index="${index}"]`);
-                if (card) {
-                    card.style.animation = 'fadeOut 0.5s ease-out forwards';
-                    setTimeout(() => {
-                        card.remove();
-                        
-                        // Check if all photos are deleted
-                        const remainingPhotos = document.querySelectorAll('.photo-card:not(.placeholder)').length;
-                        if (remainingPhotos === 0) {
-                            // Reload to show upload section again
-                            location.reload();
-                        }
-                    }, 500);
-                }
-            }
-        }
-
-        // Make deletePhoto available globally
-        window.deletePhoto = deletePhoto;
-
-        // Load saved photos on page load
+        // Load photos on page load
         function loadSavedPhotos() {
-            let hasPhotos = false;
-            for (let i = 0; i < 15; i++) {
-                const savedPhoto = localStorage.getItem(`mom-photo-${i}`);
-                if (savedPhoto) {
-                    hasPhotos = true;
-                    createPhotoCard(savedPhoto, i);
-                }
-            }
+            let photosLoaded = 0;
             
-            // If no photos saved, show upload section and placeholders
-            if (!hasPhotos) {
-                createUploadSection();
+            // Use manual photos from the array
+            manualPhotos.forEach((photoUrl, index) => {
+                // Load any non-empty URL
+                if (photoUrl && photoUrl.trim() !== '') {
+                    createPhotoCard(photoUrl, index);
+                    photosLoaded++;
+                }
+            });
+            
+            // Show placeholders if no photos were loaded
+            if (photosLoaded === 0) {
                 createPlaceholders();
             }
         }
