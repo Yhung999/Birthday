@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Mom! 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Envelope Section */
+        #envelope-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1000;
+            transition: opacity 1s ease-out;
+        }
+
+        #envelope-section.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 120px solid #fab1a0;
+            transform-origin: top center;
+            transition: transform 1s ease;
+            z-index: 3;
+        }
+
+        .envelope-wrapper.opened .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 300px;
+            height: 100px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 0 0 10px 10px;
+            z-index: 2;
+        }
+
+        .letter {
+            position: absolute;
+            width: 260px;
+            height: 180px;
+            background: white;
+            top: 10px;
+            left: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1.2s ease;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .envelope-wrapper.opened .letter {
+            transform: translateY(-150px);
+        }
+
+        .letter h2 {
+            color: #e17055;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .letter p {
+            color: #636e72;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: -60px;
+            color: white;
+            font-size: 18px;
+            animation: pulse 2s infinite;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        /* Main Content */
+        #main-content {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        #main-content.visible {
+            display: block;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+            to { 
+                opacity: 0; 
+                transform: scale(0.8);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 56px;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: colorChange 3s infinite alternate;
+        }
+
+        @keyframes colorChange {
+            0% { color: #fff; }
+            50% { color: #ffeaa7; }
+            100% { color: #fff; }
+        }
+
+        .header p {
+            font-size: 24px;
+            color: #ffeaa7;
+            font-style: italic;
+        }
+
+        /* Floating hearts */
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: float 6s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Gallery */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .photo-card {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            opacity: 0;
+            animation: slideIn 0.8s ease-out forwards;
+            cursor: pointer;
+        }
+
+        .photo-card:nth-child(1) { animation-delay: 0.1s; }
+        .photo-card:nth-child(2) { animation-delay: 0.2s; }
+        .photo-card:nth-child(3) { animation-delay: 0.3s; }
+        .photo-card:nth-child(4) { animation-delay: 0.4s; }
+        .photo-card:nth-child(5) { animation-delay: 0.5s; }
+        .photo-card:nth-child(6) { animation-delay: 0.6s; }
+        .photo-card:nth-child(7) { animation-delay: 0.7s; }
+        .photo-card:nth-child(8) { animation-delay: 0.8s; }
+        .photo-card:nth-child(9) { animation-delay: 0.9s; }
+        .photo-card:nth-child(10) { animation-delay: 1s; }
+        .photo-card:nth-child(11) { animation-delay: 1.1s; }
+        .photo-card:nth-child(12) { animation-delay: 1.2s; }
+        .photo-card:nth-child(13) { animation-delay: 1.3s; }
+        .photo-card:nth-child(14) { animation-delay: 1.4s; }
+        .photo-card:nth-child(15) { animation-delay: 1.5s; }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .delete-btn:hover {
+            background: rgba(192, 57, 43, 1);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) rotateX(-10deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .photo-wrapper {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .photo-caption {
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        }
+
+        .photo-caption p {
+            color: #2d3436;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Modal for photo popup */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoomIn 0.4s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-caption {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 15px 15px;
+            text-align: center;
+        }
+
+        .modal-caption h3 {
+            color: #e17055;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .modal-caption p {
+            color: #2d3436;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.2);
+        }
+
+        .courtesy-text {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #ffeaa7;
+            color: #636e72;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .message-section {
+            text-align: center;
+            margin: 60px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            max-width: 800px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-section h2 {
+            color: #e17055;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .message-section p {
+            color: #2d3436;
+            font-size: 20px;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* Music control */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+
+        .music-control span {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Envelope Section -->
+    <div id="envelope-section">
+        <div class="envelope-wrapper" id="envelope">
+            <div class="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-back"></div>
+                <div class="letter">
+                    <h2>Happy Birthday!</h2>
+                    <p>Click to open your special surprise 💝</p>
+                </div>
+                <div class="envelope-front"></div>
+            </div>
+            <div class="click-hint">✨ Click the envelope ✨</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Floating Hearts -->
+        <div class="hearts" id="hearts-container"></div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Happy Birthday Mom! 🎉</h1>
+            <p>To the most wonderful mother in the world ❤️</p>
+        </div>
+
+        <!-- Gallery -->
+        <div class="gallery-container">
+            <div class="gallery" id="gallery">
+                <!-- Photo cards will be added here -->
+            </div>
+        </div>
+
+        <!-- Message Section -->
+        <div class="message-section">
+            <h2>With All My Love 💕</h2>
+            <p>
+                Mom, you are the light of my life, my biggest supporter, and my best friend.
+                Thank you for all the love, laughter, and memories we've shared together.
+                I hope this day brings you as much joy as you bring to everyone around you.
+                Happy Birthday! I love you more than words can express. 🌹
+            </p>
+        </div>
+    </div>
+
+    <!-- Photo Modal -->
+    <div class="modal" id="photo-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <img id="modal-image" src="" alt="Photo">
+            <div class="modal-caption">
+                <h3 id="modal-title"></h3>
+                <p id="modal-description"></p>
+                <div class="courtesy-text">Courtesy from Family ❤️</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Music Control -->
+    <div class="music-control" id="music-control" style="display: none;">
+        <span id="music-icon">🎵</span>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="birthday-music" loop>
+        <source src="./[Waploaded]_King_Sunny_Ade_-_Appreciation-1543456193.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Envelope opening
+        const envelope = document.getElementById('envelope');
+        const envelopeSection = document.getElementById('envelope-section');
+        const mainContent = document.getElementById('main-content');
+        const music = document.getElementById('birthday-music');
+        const musicControl = document.getElementById('music-control');
+        const musicIcon = document.getElementById('music-icon');
+        let musicPlaying = false;
+
+        envelope.addEventListener('click', function() {
+            this.classList.add('opened');
+            
+            setTimeout(() => {
+                envelopeSection.classList.add('hidden');
+                mainContent.classList.add('visible');
+                musicControl.style.display = 'block';
+                
+                // Try to play music
+                music.play().then(() => {
+                    musicPlaying = true;
+                    musicIcon.textContent = '🎵';
+                }).catch(() => {
+                    musicPlaying = false;
+                    musicIcon.textContent = '🔇';
+                });
+                
+                // Create floating hearts
+                createHearts();
+            }, 1500);
+        });
+
+        // Music control
+        musicControl.addEventListener('click', function() {
+            if (musicPlaying) {
+                music.pause();
+                musicIcon.textContent = '🔇';
+                musicPlaying = false;
+            } else {
+                music.play();
+                musicIcon.textContent = '🎵';
+                musicPlaying = true;
+            }
+        });
+
+        // Create floating hearts
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts-container');
+            const heartSymbols = ['❤️', '💕', '💖', '💗', '💝', '🌹'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heartsContainer.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 7000);
+            }, 500);
+        }
+
+        // Photo data - YOU CAN CUSTOMIZE THESE MESSAGES!
+        const photoData = [
+            {
+                title: "Our Beautiful Mom",
+                description: "Your smile lights up every room you enter. You are the heart of our family and our greatest blessing."
+            },
+            {
+                title: "A Mother's Love",
+                description: "Thank you for your endless love, patience, and wisdom. You've shaped us into who we are today."
+            },
+            {
+                title: "Forever Grateful",
+                description: "For all the sacrifices you've made, the late nights, and the unwavering support - we are eternally grateful."
+            },
+            {
+                title: "Our Superhero",
+                description: "You've always been our real-life superhero, solving problems and making everything better with your love."
+            },
+            {
+                title: "Precious Memories",
+                description: "Every moment with you is a treasure. These memories fill our hearts with joy and love."
+            },
+            {
+                title: "Your Strength Inspires Us",
+                description: "Your courage and strength through every challenge inspire us to be better every day."
+            },
+            {
+                title: "The Best Cook",
+                description: "Your meals are made with love, and no one can ever replicate the magic you create in the kitchen."
+            },
+            {
+                title: "Always There",
+                description: "Through thick and thin, you've always been our rock. Your presence brings us peace and comfort."
+            },
+            {
+                title: "Beautiful Inside & Out",
+                description: "Your beauty radiates from within. Your kind heart and gentle spirit make you truly extraordinary."
+            },
+            {
+                title: "Our Guiding Light",
+                description: "You've guided us with your wisdom and shown us the path to kindness, love, and compassion."
+            },
+            {
+                title: "Laughter & Joy",
+                description: "Your laughter is contagious and your joy is infectious. You make every day brighter."
+            },
+            {
+                title: "Best Friend",
+                description: "You're not just our mom, you're our confidant, our best friend, and our biggest cheerleader."
+            },
+            {
+                title: "Unconditional Love",
+                description: "Your love knows no bounds. You've loved us unconditionally through every phase of life."
+            },
+            {
+                title: "Forever Young",
+                description: "Your spirit is forever young and your energy is boundless. You're an inspiration to us all."
+            },
+            {
+                title: "Happy Birthday Mom!",
+                description: "Wishing you a day as wonderful as you are. May this year bring you all the happiness you deserve!"
+            }
+        ];
+
+        // Modal functionality
+        const modal = document.getElementById('photo-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const closeModal = document.getElementById('close-modal');
+
+        function openModal(imageSrc, title, description) {
+            modal.classList.add('active');
+            modalImage.src = imageSrc;
+            modalTitle.textContent = title;
+            modalDescription.textContent = description;
+        }
+
+        closeModal.addEventListener('click', function() {
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Create photo upload section
+        function createUploadSection() {
+            const gallery = document.getElementById('gallery');
+            
+            const uploadSection = document.createElement('div');
+            uploadSection.style.cssText = `
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                margin-bottom: 20px;
+            `;
+            
+            uploadSection.innerHTML = `
+                <h2 style="color: white; font-size: 32px; margin-bottom: 20px;">📸 Add Your Photos Here</h2>
+                <p style="color: #ffeaa7; margin-bottom: 30px; font-size: 18px;">
+                    Click below to upload up to 15 beautiful photos of Mom. Once uploaded, they'll be saved permanently!
+                </p>
+                <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
+                <button class="upload-btn" onclick="document.getElementById('file-input').click()" style="
+                    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+                    color: #2d3436;
+                    padding: 15px 40px;
+                    border: none;
+                    border-radius: 50px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+                ">
+                    Choose Photos
+                </button>
+            `;
+            
+            gallery.insertBefore(uploadSection, gallery.firstChild);
+            
+            // File input handler
+            const fileInput = uploadSection.querySelector('#file-input');
+            fileInput.addEventListener('change', handleFileUpload);
+        }
+
+        // Handle file upload and save to localStorage
+        function handleFileUpload(e) {
+            const files = Array.from(e.target.files).slice(0, 15);
+            const gallery = document.getElementById('gallery');
+            
+            // Clear placeholder cards
+            const placeholders = gallery.querySelectorAll('.photo-card.placeholder');
+            placeholders.forEach(card => card.remove());
+            
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Compress the image before saving
+                    compressImage(e.target.result, function(compressedImage) {
+                        try {
+                            // Save to localStorage
+                            localStorage.setItem(`mom-photo-${index}`, compressedImage);
+                            
+                            // Create card
+                            createPhotoCard(compressedImage, index);
+                        } catch (error) {
+                            console.error('Error saving photo:', error);
+                            alert('Could not save photo ' + (index + 1) + '. Storage might be full. Try uploading smaller images or fewer photos at once.');
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Compress image to reduce storage size
+        function compressImage(dataUrl, callback) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Max dimensions for compression
+                const maxWidth = 1200;
+                const maxHeight = 1200;
+                
+                let width = img.width;
+                let height = img.height;
+                
+                // Calculate new dimensions while maintaining aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = height * (maxWidth / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = width * (maxHeight / height);
+                        height = maxHeight;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw and compress
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convert to JPEG with quality 0.7 for better compression
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                callback(compressedDataUrl);
+            };
+            img.src = dataUrl;
+        }
+
+        // Create photo card
+        function createPhotoCard(imageSrc, index) {
+            const gallery = document.getElementById('gallery');
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            card.style.animationDelay = (index * 0.1) + 's';
+            card.dataset.index = index;
+            
+            const data = photoData[index] || {
+                title: `Beautiful Memory ${index + 1}`,
+                description: "A wonderful moment captured in time. You make every memory special."
+            };
+            
+            card.innerHTML = `
+                <button class="delete-btn" onclick="deletePhoto(${index}, event)" title="Remove this photo">×</button>
+                <div class="photo-wrapper">
+                    <img src="${imageSrc}" style="width: 100%; height: 100%; object-fit: cover;" alt="Mom photo ${index + 1}">
+                </div>
+                <div class="photo-caption">
+                    <p>${data.title} 💝</p>
+                    <div class="courtesy-text">Courtesy from Family ❤️</div>
+                </div>
+            `;
+            
+            // Add click event to open modal (but not on delete button)
+            const photoWrapper = card.querySelector('.photo-wrapper');
+            const photoCaption = card.querySelector('.photo-caption');
+            
+            photoWrapper.addEventListener('click', function() {
+                openModal(imageSrc, data.title, data.description);
+            });
+            
+            photoCaption.addEventListener('click', function() {
+                openModal(imageSrc, data.title, data.description);
+            });
+            
+            gallery.appendChild(card);
+        }
+
+        // Delete photo function
+        function deletePhoto(index, event) {
+            event.stopPropagation(); // Prevent modal from opening
+            
+            if (confirm('Are you sure you want to remove this photo?')) {
+                // Remove from localStorage
+                localStorage.removeItem(`mom-photo-${index}`);
+                
+                // Remove card from display
+                const card = document.querySelector(`.photo-card[data-index="${index}"]`);
+                if (card) {
+                    card.style.animation = 'fadeOut 0.5s ease-out forwards';
+                    setTimeout(() => {
+                        card.remove();
+                        
+                        // Check if all photos are deleted
+                        const remainingPhotos = document.querySelectorAll('.photo-card:not(.placeholder)').length;
+                        if (remainingPhotos === 0) {
+                            // Reload to show upload section again
+                            location.reload();
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        // Make deletePhoto available globally
+        window.deletePhoto = deletePhoto;
+
+        // Load saved photos on page load
+        function loadSavedPhotos() {
+            let hasPhotos = false;
+            for (let i = 0; i < 15; i++) {
+                const savedPhoto = localStorage.getItem(`mom-photo-${i}`);
+                if (savedPhoto) {
+                    hasPhotos = true;
+                    createPhotoCard(savedPhoto, i);
+                }
+            }
+            
+            // If no photos saved, show upload section and placeholders
+            if (!hasPhotos) {
+                createUploadSection();
+                createPlaceholders();
+            }
+        }
+
+        // Create placeholder cards
+        function createPlaceholders() {
+            const gallery = document.getElementById('gallery');
+            for (let i = 0; i < 15; i++) {
+                const card = document.createElement('div');
+                card.className = 'photo-card placeholder';
+                card.innerHTML = `
+                    <div class="photo-wrapper">
+                        📷
+                    </div>
+                    <div class="photo-caption">
+                        <p>Photo Slot ${i + 1}</p>
+                        <div class="courtesy-text">Courtesy from Family ❤️</div>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            }
+        }
+
+        // Load photos when page loads
+        window.addEventListener('load', function() {
+            loadSavedPhotos();
+        });
+    </script>
+</body>
+</html>
